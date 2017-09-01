@@ -148,6 +148,7 @@ function setup_interface() {
     mac_address_var="${iface}_MAC"
     gateway_var="${iface}_GATEWAY"
     dns_var="${iface}_DNS"
+    search_domain_var="${iface}_SEARCH_DOMAIN"
 
     network_conf="/etc/systemd/network/99-opennebula-$(echo ${!mac_address_var} | tr : -).network"
     if [ -n "$DEBUG" ] ; then
@@ -180,6 +181,12 @@ EOT
 	if [ -n "$dns" ] ; then
 	    cat >> $network_conf <<EOT
 DNS=$dns
+EOT
+	fi
+	search_domain="${!search_domain_var}"
+	if [ -n "$search_domain" ] ; then
+	    cat >> $network_conf <<EOT
+Domains=$search_domain
 EOT
 	fi
     else
