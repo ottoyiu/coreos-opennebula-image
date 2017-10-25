@@ -149,6 +149,7 @@ function setup_interface() {
     gateway_var="${iface}_GATEWAY"
     dns_var="${iface}_DNS"
     search_domain_var="${iface}_SEARCH_DOMAIN"
+    ignore_iface="${iface}_IGNORE"
 
     network_conf="/etc/systemd/network/99-opennebula-$(echo ${!mac_address_var} | tr : -).network"
     if [ -n "$DEBUG" ] ; then
@@ -166,7 +167,7 @@ MACAddress=${!mac_address_var}
 [Network]
 EOT
 
-    if [ -n "${!ip_address_var}" ] ; then
+    if [ -n "${!ip_address_var}" ] && [ -z ${!ignore_iface+x} ] ; then
         cat >> $network_conf <<EOT
 DHCP=no
 Address=${!ip_address_var}/$netmask
@@ -192,6 +193,9 @@ EOT
     else
 	cat >> $network_conf <<EOF
 DHCP=yes
+
+[DHCP]
+UseDomains=true
 EOF
     fi
     echo "Network config $network_conf:"
