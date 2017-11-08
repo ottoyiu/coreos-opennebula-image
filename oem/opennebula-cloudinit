@@ -10,7 +10,11 @@ here="$(cd $(dirname $0) && pwd)"
 
 echo "Running cloud-init with user data"
 
-if [ -z "$USER_DATA" ] ; then
+if [ -n "$START_SCRIPT_BASE64" ]; then
+    USER_DATA="$(echo $START_SCRIPT_BASE64 | base64 -d)"
+elif [ -n "$USER_DATA_BASE64" ]; then
+    USER_DATA="$(echo $USER_DATA_BASE64 | base64 -d)"
+elif [ -z "$USER_DATA" ] ; then
     if [ -z "$EC2_USER_DATA" ] ; then
 	echo "No user data, leaving."
 	exit 0
